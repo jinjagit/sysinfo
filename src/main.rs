@@ -4,15 +4,20 @@
 
 // Enabling macro_use allows the `colorpair!` macro, though you can also use
 // `ColorPair::new(Color,Color)` if you don't want the macro.
-extern crate easycurses;
+
 
 use easycurses::Color::*;
 use easycurses::*;
 use std::{thread, time::Duration};
+use sysinfo::{ProcessorExt, SystemExt};
 
 fn main() {
   // Initialize the system
   let mut easy = EasyCurses::initialize_system().unwrap();
+
+  //easy.set_scrolling(false);
+
+  easy.clear();
 
   // don't show the cursor
   easy.set_cursor_visibility(CursorVisibility::Invisible);
@@ -21,25 +26,38 @@ fn main() {
   easy.set_echo(false);
 
   // we'll print this in green text.
-  easy.set_color_pair(colorpair!(Green on Black));
+  easy.set_color_pair(colorpair!(Blue on Black));
 
-  let mut n: u32 = 0;
+  let mut system = sysinfo::System::new_all();
+
+  let mut num_cores: u8 = 0;
+
+  // Count virtual cores.
+  for _processor in system.get_processors() {
+    num_cores += 1;
+  }
+
+
 
   loop {
     easy.move_rc(1, 2);
-    easy.print(format!("{}   ", n));
-
-    n += 1;
 
     easy.refresh();
 
-    thread::sleep(Duration::from_millis(1));
+    system.refresh_all();
+
+    let mut total: f32 = 0.0;
+
+    for processor in system.get_processors() {
+        total += processor.get_cpu_usage();
+    }
+
+    let ave = total / num_cores as f32;
+
+    easy.print(format!("{}", ave as u8));
+    easy.print_char('%');
+    easy.print("  ");
+
+    thread::sleep(Duration::from_millis(1000));
   }
-
-  // Ensure that the user has the latest view of things.
-
-  // Get one input from the user. This is just so that they have a chance to
-  // see the message and press a key, otherwise the program would end faster
-  // than they could read it.
-  //easy.get_input();
 }
