@@ -1,3 +1,6 @@
+// A completely pointless ascii 'art' cpu percentage usage monitor that runs in the terminal.
+// Just exploring the easycurses crate.
+
 // Prevents a spare console from being created attached to our program on
 // windows, but only if we're running in release mode.
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
@@ -12,11 +15,11 @@ use sysinfo::{ProcessorExt, SystemExt};
 
 fn main() {
     let cpu: Vec<&str> = vec![
-        "#####  #####  #   #  ##  #      ",
-        "#      #   #  #   #  ## #    #  ",
-        "#      #####  #   #    #        ",
-        "#      #      #   #   # ##   #  ",
-        "#####  #      #####  #  ##      ",
+        "#####  #####  #   #  ##  #     ",
+        "#      #   #  #   #  ## #   #  ",
+        "#      #####  #   #    #       ",
+        "#      #      #   #   # ##  #  ",
+        "#####  #      #####  #  ##     ",
     ];
 
     let nums: Vec<[&str; 5]> = vec![
